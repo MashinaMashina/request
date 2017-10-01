@@ -169,7 +169,12 @@ class request {
 	
 	public function payload($data)
 	{
+		$this->set(CURLOPT_POST, true);
 		$this->set(CURLOPT_POSTFIELDS, json_encode($data));
+		$this->set(CURLOPT_HTTPHEADER, array(
+			'Content-Type: application/json; charset=utf-8',
+			'Accept: application/json'
+		));
 	}
 	
 	public function send()
