@@ -9,7 +9,7 @@ Author:	https://vk.com/id174641510
 		
 */
 
-class request {
+class Request {
 	
 	public $response = NULL;
 	public $info = array();
@@ -175,7 +175,8 @@ class request {
 	
 	public function payload($data)
 	{
-		$this->set_headers('Content-Type', 'application/json');
+		$this->set(CURLOPT_POST, true);
+		$this->set_header('Content-Type', 'application/json');
 		$this->set(CURLOPT_POSTFIELDS, json_encode($data));
 	}
 	
