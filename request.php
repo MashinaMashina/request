@@ -9,7 +9,7 @@ Author:	https://vk.com/id174641510
 		
 */
 
-class Request {
+class request {
 	
 	public $response = NULL;
 	public $info = array();
