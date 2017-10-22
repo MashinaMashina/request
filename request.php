@@ -9,7 +9,7 @@ Author:	https://vk.com/id174641510
 		
 */
 
-class request {
+class Request {
 	
 	public $response = NULL;
 	public $info = array();
@@ -18,6 +18,7 @@ class request {
 	public $session = '';
 	public $dir = '';
 	public $headers = '';
+	public $out_headers = array();
 	public $options = array();
 	public $useragent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
 	
@@ -135,7 +136,7 @@ class request {
 		$this->set(CURLOPT_RETURNTRANSFER, 1);
 		$this->set(CURLOPT_FOLLOWLOCATION, true);
 		$this->set(CURLOPT_USERAGENT, $this->useragent);
-		$this->set(CURLOPT_HEADERFUNCTION, array(&$this, 'set_headers'));
+		$this->set(CURLOPT_HEADERFUNCTION, array(&$this, '_set_headers'));
 	}
 	
 	public function set($key, $value)
@@ -143,10 +144,10 @@ class request {
 		$this->options[$key] = $value;
 	}
 	
-	public function session($name = false)
+	public function session($name = false, $need_clear = false)
 	{
 		$this->name = $name ? $name : md5(microtime());
-		$this->dir = DATA.'/'.$this->name;
+		$this->dir = DIR.'/data/request/'.$this->name;
 		
 		if( !file_exists($this->dir))
 		{
@@ -154,6 +155,11 @@ class request {
 		}
 		
 		$cookie = $this->dir.'/cookie.dat';
+		
+		if( $need_clear)
+		{
+			file_write($cookie, '');
+		}
 		
 		$this->set(CURLOPT_COOKIEJAR, $cookie);
 		$this->set(CURLOPT_COOKIEFILE, $cookie);
@@ -169,16 +175,12 @@ class request {
 	
 	public function payload($data)
 	{
-		$this->set(CURLOPT_POST, true);
+		$this->set_headers('Content-Type', 'application/json');
 		$this->set(CURLOPT_POSTFIELDS, json_encode($data));
-		$this->set(CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/json; charset=utf-8',
-			'Accept: application/json'
-		));
 	}
 	
 	public function send()
-	{	
+	{
 		$ch = curl_init();
 
 		curl_setopt_array($ch, $this->options);
@@ -257,11 +259,25 @@ class request {
 		return $charset;
 	}
 	
-	public function set_headers($ch, $header)
+	public function _set_headers($ch, $header) // system function
 	{
 		$this->headers .= $header;
 		
 		return strlen($header);
+	}
+	
+	public function set_headers($key, $value = '')
+	{
+		if( is_array($key))
+		{
+			$this->out_headers = array_merge_recursive($this->out_headers, $key);
+		}
+		else
+		{
+			$this->out_headers[] = "{$key}: {$value}";
+		}
+		
+		$this->set('CURLOPT_HTTPHEADER', $this->out_headers);
 	}
 	
 	public function dump()
@@ -276,6 +292,8 @@ class request {
 		
 		foreach($this->options as $k => $v)
 		{
+			if( !isset($this->opt_codes[$k])) $this->opt_codes[$k] = '(undefined)';
+		
 			$dump .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option <i>{$this->opt_codes[$k]}</i> setted to <i>";
 			
 			
