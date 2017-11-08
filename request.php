@@ -5,7 +5,7 @@
 Author:	https://vk.com/id174641510
 		https://www.nulled.cc/members/348417/
 
-07.03.2017
+08.10.2017
 		
 */
 
@@ -175,8 +175,8 @@ class request {
 	
 	public function payload($data)
 	{
-		$this->set(CURLOPT_POST, true);
 		$this->set_headers('Content-Type', 'application/json');
+		$this->set(CURLOPT_POST, true);
 		$this->set(CURLOPT_POSTFIELDS, json_encode($data));
 	}
 	
@@ -278,7 +278,7 @@ class request {
 			$this->out_headers[] = "{$key}: {$value}";
 		}
 		
-		$this->set('CURLOPT_HTTPHEADER', $this->out_headers);
+		$this->set(CURLOPT_HTTPHEADER, $this->out_headers);
 	}
 	
 	public function dump()
@@ -300,7 +300,7 @@ class request {
 			
 			if( in_array($k, array(20079)))
 			{
-				$dump .= '(callback) this::set_headers()';
+				$dump .= '(callback) this::_set_headers()';
 			}
 			elseif(is_array($v) or is_object($v))
 			{
