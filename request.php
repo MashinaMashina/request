@@ -2,10 +2,12 @@
 
 /*
 
+https://github.com/MashinaMashina/request
+
 Author:	https://vk.com/id174641510
 		https://www.nulled.cc/members/348417/
 
-08.10.2017
+22.11.2017
 		
 */
 
@@ -20,6 +22,7 @@ class request {
 	public $headers = '';
 	public $out_headers = array();
 	public $options = array();
+	public $data = array();
 	public $useragent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
 	
 	private $opt_codes = array(
@@ -128,9 +131,15 @@ class request {
 		30146 => 'CURLOPT_MAX_RECV_SPEED_LARGE',
 	);
 	
-	public function __construct($url)
+	public function __construct($url, $data = array())
 	{
 		$this->url = $url;
+			
+		$default = array(
+			'convert_encoding' => true
+		);
+		
+		$this->data = array_merge($default, $data);
 		
 		$this->set(CURLOPT_URL, $this->url);
 		$this->set(CURLOPT_RETURNTRANSFER, 1);
@@ -147,7 +156,7 @@ class request {
 	public function session($name = false, $need_clear = false)
 	{
 		$this->name = $name ? $name : md5(microtime());
-		$this->dir = DIR.'/data/request/'.$this->name;
+		$this->dir = __DIR__.'/request/'.$this->name;
 		
 		if( !file_exists($this->dir))
 		{
@@ -158,7 +167,9 @@ class request {
 		
 		if( $need_clear)
 		{
-			file_write($cookie, '');
+			$handle = fopen($cookie, 'w');
+			fwrite($handle, '');
+			fclose($handle);
 		}
 		
 		$this->set(CURLOPT_COOKIEJAR, $cookie);
@@ -207,11 +218,23 @@ class request {
 			$this->error_msg = 'Response code is '.$this->info['http_code'];
 		}
 		
-		$charset = $this->get_charset();
-		
-		if( strtoupper($charset) !== 'UTF-8')
+		if( $this->data['convert_encoding'])
 		{
-			$this->response = iconv($charset, 'UTF-8', $this->response);
+			$charset = $this->get_charset();
+		
+			if( strtoupper($charset) !== 'UTF-8')
+			{
+				$response = iconv($charset, 'UTF-8', $this->response);
+				
+				if( empty($response) and !empty($this->response))
+				{
+					die($this->response);
+				}
+				else
+				{
+					$this->response = $response;
+				}
+			}
 		}
 		
 		return $this->response;
