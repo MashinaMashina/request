@@ -7,7 +7,7 @@ https://github.com/MashinaMashina/request
 Author:	https://vk.com/id174641510
 		https://www.nulled.cc/members/348417/
 
-22.11.2017
+28.11.2017
 		
 */
 
@@ -24,6 +24,8 @@ class request {
 	public $options = array();
 	public $data = array();
 	public $useragent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
+	
+	private $charset = false;
 	
 	private $opt_codes = array(
 		3 => 'CURLOPT_PORT',
@@ -156,7 +158,7 @@ class request {
 	public function session($name = false, $need_clear = false)
 	{
 		$this->name = $name ? $name : md5(microtime());
-		$this->dir = __DIR__.'/request/'.$this->name;
+		$this->dir = APPPATH.'cache/request/'.$this->name;
 		
 		if( !file_exists($this->dir))
 		{
@@ -167,9 +169,7 @@ class request {
 		
 		if( $need_clear)
 		{
-			$handle = fopen($cookie, 'w');
-			fwrite($handle, '');
-			fclose($handle);
+			write_file($cookie, '');
 		}
 		
 		$this->set(CURLOPT_COOKIEJAR, $cookie);
@@ -224,7 +224,7 @@ class request {
 		
 			if( strtoupper($charset) !== 'UTF-8')
 			{
-				$response = iconv($charset, 'UTF-8', $this->response);
+				$response = iconv($charset, 'UTF-8//TRANSLIT', $this->response);
 				
 				if( empty($response) and !empty($this->response))
 				{
@@ -254,11 +254,9 @@ class request {
 
 	public function get_charset()
 	{
-		static $charset;
-		
-		if( isset($charset))
+		if( $this->charset)
 		{
-			return $charset;
+			return $this->charset;
 		}
 		
 		$match = NULL;
@@ -267,20 +265,20 @@ class request {
 		
 		if( count($match))
 		{
-			$charset = $match[2];
-			return $charset;
+			$this->charset = $match[2];
+			return $this->charset;
 		}
 		
 		preg_match('#charset(:|=)("|\'|)(.+?)("|\')#s', $this->response, $match);
 		
 		if( count($match))
 		{
-			$charset = $match[3];
-			return $charset;
+			$this->charset = $match[3];
+			return $this->charset;
 		}
 		
-		$charset = mb_detect_encoding($this->response);
-		return $charset;
+		$this->charset = mb_detect_encoding($this->response);
+		return $this->charset;
 	}
 	
 	public function _set_headers($ch, $header) // system function
@@ -302,6 +300,58 @@ class request {
 		}
 		
 		$this->set(CURLOPT_HTTPHEADER, $this->out_headers);
+	}
+	
+	function get_cookie() {
+		$filename = $this->dir.'/cookie.dat';
+		
+		$handle = fopen($filename, 'r');
+		$size = filesize($filename);
+		
+		if($size === 0)
+		{
+			$string = '';
+		}
+		
+		$string = fread($handle, $size);
+		fclose($handle);
+		
+		$cookies = array();
+		
+		$lines = explode("\n", $string);
+	 
+		// iterate over lines
+		foreach ($lines as $line) {
+	 
+			// we only care for valid cookie def lines
+			if (isset($line[0]) && substr_count($line, "\t") == 6) {
+	 
+				// get tokens in an array
+				$tokens = explode("\t", $line);
+	 
+				// trim the tokens
+				$tokens = array_map('trim', $tokens);
+	 
+				$cookie = array();
+	 
+				// Extract the data
+				$cookie['domain'] = $tokens[0];
+				$cookie['flag'] = $tokens[1];
+				$cookie['path'] = $tokens[2];
+				$cookie['secure'] = $tokens[3];
+	 
+				// Convert date to a readable format
+				$cookie['expiration'] = date('Y-m-d h:i:s', $tokens[4]);
+	 
+				$cookie['name'] = $tokens[5];
+				$cookie['value'] = $tokens[6];
+	 
+				// Record the cookie.
+				$cookies[] = $cookie;
+			}
+		}
+		
+		return $cookies;
 	}
 	
 	public function dump()
