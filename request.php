@@ -23,7 +23,7 @@ class request {
 	public $out_headers = array();
 	public $options = array();
 	public $data = array();
-	public $useragent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
+	public $useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36';
 	
 	private $charset = false;
 	
