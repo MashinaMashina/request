@@ -265,7 +265,7 @@ class request {
 		
 		if( count($match))
 		{
-			$this->charset = $match[2];
+			$this->charset = strtoupper($match[2]);
 			return $this->charset;
 		}
 		
@@ -273,7 +273,7 @@ class request {
 		
 		if( count($match))
 		{
-			$this->charset = $match[3];
+			$this->charset = strtoupper($match[3]);
 			return $this->charset;
 		}
 		
