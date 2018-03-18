@@ -158,7 +158,7 @@ class request {
 	public function session($name = false, $need_clear = false)
 	{
 		$this->name = $name ? $name : md5(microtime());
-		$this->dir = APPPATH.'cache/request/'.$this->name;
+		$this->dir = __DIR__.'/request/'.$this->name;
 		
 		if( !file_exists($this->dir))
 		{
@@ -169,7 +169,9 @@ class request {
 		
 		if( $need_clear)
 		{
-			write_file($cookie, '');
+			$handle = fopen($cookie, 'w');
+			$result = fwrite($handle, '');
+			fclose($handle);
 		}
 		
 		$this->set(CURLOPT_COOKIEJAR, $cookie);
