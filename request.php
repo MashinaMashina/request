@@ -4,8 +4,7 @@
 
 https://github.com/MashinaMashina/request
 
-Author:	https://vk.com/id174641510
-		https://www.nulled.cc/members/348417/
+Author:	t.me/MashinaMashina
 
 28.11.2017
 		
