@@ -1,0 +1,13 @@
+{
+    "name": "mashinamashina/request",
+    "description": "Simply http querys in php",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Morozov Roman",
+            "email": "r-r-roma-a-a@yandex.ru"
+        }
+    ],
+    "require": {}
+}
