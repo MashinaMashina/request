@@ -5,7 +5,9 @@
 Самый простой пример:
 
 ```php
-$request = new request('https://github.com');
+use MashinaMashina\Request\Request;
+
+$request = new Request('https://github.com');
 $request->send();
 
 echo $request->response;
@@ -29,7 +31,9 @@ echo $request->response;
 
 Примеры:
 ```php
-$request = new request('http://google.com');
+use MashinaMashina\Request\Request;
+
+$request = new Request('http://google.com');
 $request->session('google');
 $request->send();
 
@@ -46,7 +50,7 @@ $data = array(
   'passwd' => '12345'
 );
 
-$request = new request('http://example.com');
+$request = new Request('http://example.com');
 $request->post($data);
 $request->send();
 
@@ -64,9 +68,15 @@ $data = array(
   )
 );
 
-$request = new request('http://example.com');
+$request = new Request('http://example.com');
 $request->payload($data);
 $request->send();
 
 echo $request->response;
 ```
+
+# Установка:
+```
+composer require mashinamashina/request
+```
+
