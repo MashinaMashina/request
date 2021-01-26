@@ -17,7 +17,7 @@ class Request {
 	public $error_code = 0;
 	public $error_msg = '';
 	public $session = '';
-	public $dir = '';
+	public $directory = '';
 	public $headers = '';
 	public $out_headers = array();
 	public $options = array();
@@ -154,17 +154,16 @@ class Request {
 		$this->options[$key] = $value;
 	}
 	
-	public function session($name = false, $need_clear = false)
+	public function session($directory, $need_clear = false)
 	{
-		$this->name = $name ? $name : md5(microtime());
-		$this->dir = __DIR__.'/request/'.$this->name;
+		$this->directory = $directory;
 		
-		if( !file_exists($this->dir))
+		if( !file_exists($this->directory))
 		{
-			mkdir($this->dir);
+			mkdir($this->directory);
 		}
 		
-		$cookie = $this->dir.'/cookie.dat';
+		$cookie = $this->directory . '/cookie.dat';
 		
 		if( $need_clear)
 		{
@@ -304,7 +303,7 @@ class Request {
 	}
 	
 	function get_cookie() {
-		$filename = $this->dir.'/cookie.dat';
+		$filename = $this->directory . '/cookie.dat';
 		
 		$handle = fopen($filename, 'r');
 		$size = filesize($filename);

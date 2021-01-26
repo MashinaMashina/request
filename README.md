@@ -16,8 +16,7 @@ echo $request->response;
 Методы:
 - request::_\_construct($url) - устанавливает URL запроса
 - request::set($key, $value) - Устанавливает параметр CURL. [Описание параметров](http://php.net/manual/ru/function.curl-setopt.php)
-- request::session($name = false) - Устанавливает имя сессии (Путь сохранения cookie, а не имя PHPSESSID).
-  ! Надо настроить путь: заменить DATA в строке $this->dir = DATA.'/'.$this->name;
+- request::session($directory) - Устанавливает папку для хранения временных файлов сессии.
 - request::post($data = array()) - устанавливает передаваемые данные и тип запроса в POST
 - request::payload($data) - устанавливает тип запроса POST, данные кодирует в JSON [Можно чуть-чуть почитать тут](https://stackoverflow.com/questions/23118249/whats-the-difference-between-request-payload-vs-form-data-as-seen-in-chrome)
 - request::send() - отправляет запрос. Возвращает содержимое страницы запроса
