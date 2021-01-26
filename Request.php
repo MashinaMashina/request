@@ -175,7 +175,7 @@ class Request {
 		$this->set(CURLOPT_COOKIEJAR, $cookie);
 		$this->set(CURLOPT_COOKIEFILE, $cookie);
 		
-		return $this->name;
+		return $this->directory;
 	}
 	
 	public function post($data = array())
